@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { SubjectsService } from '../../core/services/subjects.service';
+import { catchError, map, of } from 'rxjs';
 import { Book } from 'src/app/core/models/book-response.model';
+import { BookService } from 'src/app/core/services/book.service';
 
 @Component({
   selector: 'front-end-internship-assignment-trending-subjects',
@@ -18,23 +19,57 @@ export class TrendingSubjectsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private subjectsService: SubjectsService
+    private bookService: BookService,
   ) {}
 
   getAllBooks() {
-    this.subjectsService.getAllBooks(this.subjectName).subscribe((data) => {
-      this.allBooks = data?.works;
-      // this.subjectsArray = data;
-      this.isLoading = false;
-    });
+    this.bookService.getBooks(this.subjectName)
+      .pipe(
+        map(data => {
+          this.allBooks = data.works;
+          this.saveToCache(this.subjectName, this.allBooks);
+        }),
+        catchError(() => {
+          console.log('Error fetching books.');
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        this.isLoading = false;
+      });
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.subjectName = params.get('name') || '';
       this.isLoading = true;
-      this.getAllBooks();
+      const cachedBooks = this.getFromCache(this.subjectName);
+      if (cachedBooks) {
+        this.allBooks = cachedBooks;
+        this.isLoading = false;
+      } else {
+        this.getAllBooks();
+      }
     });
+  }
+
+  private getFromCache(key: string): Book[] | null {
+    const cachedData = localStorage.getItem(key);
+    if (cachedData) {
+      const { data, expiration } = JSON.parse(cachedData);
+      if (expiration && expiration > Date.now()) {
+        return data;
+      } else {
+        localStorage.removeItem(key);
+      }
+    }
+    return null;
+  }
+
+  private saveToCache(key: string, data: Book[]): void {
+    const expiration = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+    const cacheData = { data, expiration };
+    localStorage.setItem(key, JSON.stringify(cacheData));
   }
 
 }
