@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
-import { Book } from 'src/app/core/models/book-response.model';
+import { Book } from 'src/app/core/interfaces/book.interface';
 import { BookService } from 'src/app/core/services/book.service';
 
 @Component({
@@ -27,6 +27,8 @@ export class TrendingSubjectsComponent implements OnInit {
       .pipe(
         map(data => {
           this.allBooks = data.works;
+          console.log('allBooks', this.allBooks);
+          
           this.saveToCache(this.subjectName, this.allBooks);
         }),
         catchError(() => {

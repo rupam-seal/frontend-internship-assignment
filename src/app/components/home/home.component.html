@@ -20,4 +20,17 @@
       </li>
     </ul>
   </section>
+  <div *ngIf="isLoading; else loadedContent">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+  <ng-template #loadedContent>
+    <div *ngIf="searchResults && searchResults.length > 0">
+      <front-end-internship-assignment-table-view
+        [booksList]="searchResults"
+        [subjectName]="subjectName"
+      ></front-end-internship-assignment-table-view>
+    </div>
+  </ng-template>
+  
 </div>
