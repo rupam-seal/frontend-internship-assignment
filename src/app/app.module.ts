@@ -8,7 +8,9 @@ import { HomeComponent } from '../app/components/home/home.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @NgModule({
   declarations: [AppComponent, TrendingSubjectsComponent, HomeComponent],
@@ -18,7 +20,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     HttpClientModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatPaginatorModule, MatProgressSpinnerModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent],

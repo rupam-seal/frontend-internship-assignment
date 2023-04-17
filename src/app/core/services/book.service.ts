@@ -41,6 +41,26 @@ export class BookService {
       );
   }
 
+  pageBooks(query: string, page: number, pageSize: number): Observable<Book[]> {
+    const startIndex = (page - 1) * pageSize;
+    const fields = 'title,author_name,key,first_publish_year';
+    return this.apiService
+      .get(`/search.json?q=${query}&fields=${fields}&limit=${pageSize}&offset=${startIndex}`)
+      .pipe(
+        map((response: any) => {
+          console.log('bookService: ',response);
+          return response.docs.map((book: any) => {
+            return {
+              key: book.key,
+              title: book.title,
+              authors: [{key: book.key, name:book.author_name}],
+              publish: book.first_publish_year,
+            };
+          });
+        })
+      );
+  }
+
   private processResponse(response: BookResponse): BookResponse {
     return {
       key: response.key,

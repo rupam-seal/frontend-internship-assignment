@@ -1,8 +1,14 @@
-<div *ngIf="isLoading; else loadedContent">
+<div *ngIf="isLoading; else loadedContent" class="spinner-container">
   <div class="spinner"></div>
-  <span>Loading...</span>
 </div>
 <ng-template #loadedContent>
+  <div class="back-button">
+    <a routerLink="/">
+      <div class="container">
+        <span class="font-bold text-lg">Back</span>
+      </div>
+    </a>
+  </div>
   <div *ngIf="allBooks.length > 0">
     <front-end-internship-assignment-table-view
       [booksList]="allBooks"
